@@ -77,8 +77,8 @@ def main(args_cli):
             ", otherwise modify the config file directly."
         )
     # Find a way to provide it through hyperparameters
-    run_num_updates = [100]
-
+    run_num_updates = [50]
+    num_updates = 50
     # ensure that the config provided by the user is ok
     config = check_config(args_cli.config_file_path)
 
@@ -101,8 +101,10 @@ def main(args_cli):
         ],
     ) = get_dataset_args(dataset_name)
 
-    nrounds_list = [get_nb_max_rounds(num_updates) for num_updates in run_num_updates]
-
+    #nrounds_list = [get_nb_max_rounds(num_updates) for num_updates in run_num_updates]
+    print("num_clients", NUM_CLIENTS)
+    nrounds_list=[120]
+    print("n_rounds",nrounds_list)#nrounds_list=[100]
     if args_cli.debug:
         nrounds_list = [1 for _ in run_num_updates]
         NUM_EPOCHS_POOLED = 1
@@ -151,7 +153,10 @@ def main(args_cli):
     )
 
     # We init dataloader for train and test and for local and pooled datasets
+    print ("Starting dataloader-----------------")
+    #print (FedDataset.center)
 
+    #print (FedDataset.centers)
     training_dls, test_dls = init_data_loaders(
         dataset=FedDataset,
         pooled=False,
@@ -169,7 +174,7 @@ def main(args_cli):
         batch_size_test=batch_size_test,
         collate_fn=collate_fn,
     )
-
+    print ("ending dataloader-----------------")
     # Check if some results are already computed
     results_file = get_results_file(config, path=args_cli.results_file_path)
     if results_file.exists():
@@ -264,7 +269,7 @@ def main(args_cli):
     index_of_interest = index_of_interest.union(
         df.loc[(df["Method"] == "Ensemble") & (df["seed"] == args_cli.seed)].index
     )
-
+    print ("Enfing experiments-----------------")
     if len(index_of_interest) < nb_local_and_ensemble_xps:
         # The fact that we are here means some local experiments are missing or
         # we need to compute ensemble as well so we need to redo all local experiments
