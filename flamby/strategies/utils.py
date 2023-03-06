@@ -46,11 +46,15 @@ class DataLoaderWithMemory:
         """
         try:
             X, y = next(self._iterator)
+            return X,y
         except StopIteration:
-            self._reset_iterator()
-            X, y = next(self._iterator)
-        return X, y
-
+            try:
+                self._reset_iterator()
+                X,y = next(self._iterator)
+                return X, y
+            except:
+                print("exception handled")
+                pass
 
 class _Model:
     """This is a helper class allowing to train a copy of a given model for
