@@ -10,7 +10,7 @@ from torch.utils.data import DataLoader as dl
 from tqdm import tqdm
 
 from flamby.utils import evaluate_model_on_tests
-
+from flamby.datasets.fed_heart_disease.dataset import HeartDiseaseRaw
 
 def set_seed(seed):
     """Set numpy, python and torch seed.
@@ -193,44 +193,59 @@ def init_data_loaders(
     """
     Initializes the data loaders for the training and test datasets.
     """
+    ##Add this method to avoid dataloading each time when accessing hospital data in dataloader
+    RawData = HeartDiseaseRaw()
+    #*******************************
+    
+    print ("Pooled",pooled)
     if (not pooled) and num_clients is None:
         raise ValueError("num_clients must be specified for the non-pooled data")
     batch_size_test = batch_size if batch_size_test is None else batch_size_test
     if not pooled:
+        #A = dataset(center=1,train=True,pooled=False)
+        #print ("dataset_len",len(A))
+        print ("training dl start")
         training_dls = [
             dl(
-                dataset(center=i, train=True, pooled=False),
+                dataset(RawData,center=i, train=True, pooled=False),
                 batch_size=batch_size,
                 shuffle=True,
                 num_workers=num_workers,
+                drop_last=True,
                 collate_fn=collate_fn,
             )
             for i in range(num_clients)
         ]
+        print ("training_dls done")
         test_dls = [
             dl(
-                dataset(center=i, train=False, pooled=False),
+                dataset(RawData,center=i, train=False, pooled=False),
                 batch_size=batch_size_test,
                 shuffle=False,
                 num_workers=num_workers,
+                drop_last=True,
                 collate_fn=collate_fn,
             )
             for i in range(num_clients)
         ]
+        print ("test_dls done")
         return training_dls, test_dls
+
     else:
         train_pooled = dl(
-            dataset(train=True, pooled=True),
+            dataset(RawData,train=True, pooled=True),
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
+            drop_last = True,
             collate_fn=collate_fn,
         )
         test_pooled = dl(
-            dataset(train=False, pooled=True),
+            dataset(RawData,train=False, pooled=True),
             batch_size=batch_size_test,
             shuffle=False,
             num_workers=num_workers,
+            #drop_last=True,
             collate_fn=collate_fn,
         )
         return train_pooled, test_pooled
