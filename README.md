@@ -15,7 +15,7 @@ The FLamby package contains:
 
 ## Installation
 
-We recommend using anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
+Usews anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
 
 You may need `make` for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
 Create and launch the environment using:
@@ -65,31 +65,6 @@ make enable=cam16 update
 ```
 
 
-### In case you don't have the `make` command (e.g. Windows users)
-You can install the environment by running:
-```bash
-git clone https://github.com/owkin/FLamby.git
-cd FLamby
-conda env create -f environment.yml
-conda activate flamby
-pip install -e .[all_extra]
-```
-
-or if you wish to install the environment for only one or more datasets, tests or documentation:
-```bash
-git clone https://github.com/owkin/FLamby.git
-cd FLamby
-conda env create -f environment.yml
-conda activate flamby
-pip install -e .[option_name]
-```
-
-where `option_name` can be one of the following:
-cam16, heart, isic2019, ixi, kits19, lidc, tcga, docs, tests. If you want to use more than one option you can do it
-using comma (`,`) (no space after comma), eg:
-```bash
-pip install -e .[cam16,ixi]
-```
 
 ## Quickstart
 
@@ -118,121 +93,16 @@ We have observed that results vary from machine to machine and are sensitive to 
 The script `extract_config.py` allows to go from a results file to a `config.py`.
 See the [quickstart section](./Quickstart.md) to change parameters.
 
-## Containerized execution
-
-A good step towards float-perfect reproducibility in your future benchmarks is to use docker. We give a base docker image and examples containing dataset download and benchmarking.
-For [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md), cd to the flamby dockers folder, replace `myusername` and `mypassword` with your git credentials (OAuth token) in the command below and run:
-```
-docker build -t flamby-heart -f Dockerfile.base --build-arg DATASET_PREFIX="heart" --build-arg GIT_USER="myusername" --build-arg GIT_PWD="mypassword" .
-docker build -t flamby-heart-benchmark -f Dockerfile.heart .
-docker run -it flamby-heart-benchmark
-```
-If you are convinced you will use many datasets with docker, build the base image using `all_extra` option for flamby's install, you will be able to reuse it for all datasets with multi-stage build:
-```
-docker build -t flamby-all -f Dockerfile.base --build-arg DATASET_PREFIX="all_extra" --build-arg GIT_USER="myusername" --build-arg GIT_PWD="mypassword" .
-# modify Dockerfile.* line 1 to FROM flamby-all by replacing * with the dataset name of the dataset you are interested in
-# Then run the following command replacing * similarly
-#docker build -t flamby-* -f Dockerfile.* .
-#docker run -it flamby-*-benchmark
-```
-
-Checkout `Dockerfile.tcga`.
-Similar dockerfiles can be theoretically easily built for the other datasets as well by
-replicating instructions found in each dataset folder following the model of `Dockerfile.heart`.
-Note that for bigger datasets execution can be prohibitively slow and docker can run out of time/memory.
 
 
 
-### Heterogeneity plots
 
-Most plots from the article can be reproduced using the following commands after having downloaded the corresponding datasets:
-- [Fed-TCGA-BRCA](./flamby/datasets/fed_tcga_brca/README.md)
-```
-cd flamby/datasets/fed_tcga_brca
-python plot_kms.py
-```
-- [Fed-LIDC-IDRI](./flamby/datasets/fed_lidc_idri/README.md)
-```
-cd flamby/datasets/fed_lidc_idri
-python lidc_heterogeneity_plot.py
-```
-- [Fed-ISIC2019](./flamby/datasets/fed_isic2019/README.md) 
-
-**In order to exactly reproduce the plot in the article**, one needs to first deactivate color constancy normalization when preprocessing the dataset (change `cc` to `False` in `resize_images.py`) when following download and preprocessing instructions [here](./flamby/datasets/fed_isic2019/README.md).  Hence one might have to download the dataset a second time, if it was already downloaded, and therefore to potentially update `dataset_location.yaml` files accordingly.
-```
-cd flamby/datasets/fed_isic2019
-python heterogeneity_pic.py
-```
-- [Fed-IXITiny](./flamby/datasets/fed_ixi/README.md)
-```
-cd flamby/datasets/fed_ixi
-python ixi_plotting.py
-```
-- [Fed-KITS2019](./flamby/datasets/fed_kits19/README.md)
-```
-cd flamby/datasets/fed_kits19/dataset_creation_scripts
-python kits19_heterogenity_plot.py
-```
-- [Fed-Heart-Disease](./flamby/datasets/fed_heart_disease/README.md)
-```
-cd flamby/datasets/fed_heart_disease
-python heterogeneity_plot.py
-```
-- [Fed-Camelyon16](./flamby/datasets/fed_camelyon16/README.md) 
-
-First concatenate as many 224x224 image patches extracted from regions on the slides containing matter from Hospital 0 and Hospital 1 (see what is done in the [tiling script](./flamby/datasets/fed_camelyon16/dataset_creation_scripts/tiling_slides.py) to collect image patches) as can be fit in
-the RAM. Then compute both histograms **per-color-channel** using 256 equally sized bins with the `np.histogram` 
-function with `density=True`. 
-Then save the results respectively as: histogram_0.npy, histogram_1.npy and bins_0.npy
-```
-cp -t flamby/datasets/fed_camelyon16 histograms_{0, 1}.npy bins_0.npy
-cd flamby/datasets/fed_camelyon16
-python plot_camelyon16_histogram.py 
-```
-
-## Deploy documentations
-
-We use [sphinx](https://www.sphinx-doc.org/en/master/) to create FLamby's documentation.
-In order to build the doc locally, activate the environment then:
-```bash
-cd docs
-make clean
-make html
-```
-This will generate html pages in the folder _builds/html that can be accessed in your browser:
-```bash
-open _build/html/index.html
-```
-
-
-### Guidelines
-
-After installing the package in dev mode (``pip install -e .[all_extra]``)
-You should also initialize ``pre-commit`` by running:
-```
-pre-commit install
-```
-
-The ``pre-commit`` tool will automatically run [black](https://github.com/psf/black) and
-[isort](https://github.com/PyCQA/isort) and check [flake8](https://flake8.pycqa.org/en/latest/) compatibility.
-Which will format the code automatically making the code more homogeneous and helping catching typos and errors.
-
-Looking and or commenting the open issues is a good way to start. Once you have found a way to contribute the next steps are:
-- Following the installation instructions but using the -e option when pip installing
-- Installing pre-commit
-- Creating a new branch following the convention name_contributor/short_explicit_name-wpi: `git checkout -b name_contributor/short_explicit_name-wpi`
-- Potentially pushing the branch to origin with : `git push origin name_contributor/short_explicit_name-wpi`
-- Working on the branch locally by making commits frequently: `git commit -m "explicit description of the commit's content"`
-- Once the branch is ready or after considering you have made significant progresses opening a Pull Request using Github interface, selecting your branch as a source and the target to be the main branch and creating the PR **in draft mode**  after having made **a detailed description of the content of the PR** and potentially linking to related issues.
-Rebasing the branch onto main by doing `git fetch origin` and  `git rebase origin/main`, solving potential conflicts adding the resolved files `git add myfile.py`
-then continuing with `git rebase --continue` until the rebase is complete. Then pushing the branch to origin with `git push origin --force-with-lease`.
-- Waiting for reviews then commiting and pushing changes to comply with the reviewer's requests
-- Once the PR is approved click on the arrow on the right of the merge button to select rebase and click on it
 
 
 
 ## Acknowledgements
 - [Owkin](https://www.owkin.com)
+- [FLamby](https://owkin.github.io/FLamby)
 - [Inria](https://www.inria.fr)
 - [Ecole polytechnique](https://www.polytechnique.edu)
 - [University of California - Berkeley](https://www.berkeley.edu/)
@@ -240,7 +110,6 @@ then continuing with `git rebase --continue` until the rebase is complete. Then 
 - [EPFL](https://www.epfl.ch)
 - [Universitätsklinikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
 
-<img src="docs/img/Owkin_Logo_Black.png" alt="owkin-logo" width="200"/><img src="docs/img/inr_logo_rouge.jpg" alt="inria-logo" width="200"/><img src="docs/img/ecole_polytechnique.png" alt="ecole-polytechnique-logo" width="200"/><img src="docs/img/Berkeley_wordmark_blue.png" alt="berkeley-logo" width="200"/>
-<img src="docs/img/usc-logo.png" alt="usc-logo" width="200"/><img src="docs/img/logo-epfl-1024x576.png" alt="epfl-logo" width="200"/><img src="docs/img/ukb-logo.png" alt="ukb-logo" width="200"/>
+
 
 
