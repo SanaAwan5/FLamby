@@ -103,12 +103,7 @@ See the [quickstart section](./Quickstart.md) to change parameters.
 ## Acknowledgements
 - [Owkin](https://www.owkin.com)
 - [FLamby](https://owkin.github.io/FLamby)
-- [Inria](https://www.inria.fr)
-- [Ecole polytechnique](https://www.polytechnique.edu)
-- [University of California - Berkeley](https://www.berkeley.edu/)
-- [University of Southern California (USC)](https://www.usc.edu/)
-- [EPFL](https://www.epfl.ch)
-- [Universitätsklinikum Bonn](https://www.ukbonn.de/patient_innen/international/english/)
+
 
 
 
