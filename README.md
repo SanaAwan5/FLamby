@@ -15,7 +15,7 @@ The FLamby package contains:
 
 ## Installation
 
-Usews anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
+Use anaconda and pip. You can install anaconda by downloading and executing appropriate installers from the [Anaconda website](https://www.anaconda.com/products/distribution), pip often comes included with python otherwise check [the following instructions](https://pip.pypa.io/en/stable/installation/). We support all Python version starting from **3.7**.
 
 You may need `make` for simplification. The following command will install all packages used by all datasets within FLamby. If you already know you will only need a fraction of the datasets inside the suite you can do a partial installation and update it along the way using the options described below.
 Create and launch the environment using:
@@ -64,13 +64,11 @@ or you can use `enable` option:
 make enable=cam16 update
 ```
 
-
-
 ## Quickstart
 
 Follow the [quickstart section](./Quickstart.md) to learn how to get started with FLamby.
 
-## Reproduce benchmark and figures from the companion article
+## Reproduce benchmark and figures
 
 ### Benchmarks
 The results are stored in flamby/results in corresponding subfolders `results_benchmark_fed_dataset` for each dataset.
@@ -92,12 +90,6 @@ python fed_benchmark.py --seed 46 -cfp ../config_dataset.json
 We have observed that results vary from machine to machine and are sensitive to GPU randomness. However you should be able to reproduce the results up to some variance and results on the same machine should be perfecty reproducible. Please open an issue if it is not the case.
 The script `extract_config.py` allows to go from a results file to a `config.py`.
 See the [quickstart section](./Quickstart.md) to change parameters.
-
-
-
-
-
-
 
 
 ## Acknowledgements
