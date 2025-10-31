@@ -10,7 +10,7 @@ The FLamby package contains:
 - Data loaders that automatically handle data preprocessing and partitions of distributed datasets.
 - Evaluation functions to evaluate trained models on the different tracks as defined in the companion paper.
 - Benchmark code using the utilities below to obtain the performances of baselines using different strategies.
-:arrow_right:[The API doc is available here](https://owkin.github.io/FLamby):arrow_left:
+  [The API doc is available here](https://owkin.github.io/FLamby):arrow_left:
 
 
 ## Installation
